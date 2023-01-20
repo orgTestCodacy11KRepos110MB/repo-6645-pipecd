@@ -1,0 +1,7 @@
+variable "project" {
+
+}
+
+variable "tags" {
+
+}
