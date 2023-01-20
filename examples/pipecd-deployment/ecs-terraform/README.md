@@ -66,18 +66,22 @@ spec:
 4. Edit `variables.tf` for your project
 ```
 locals {
-  project = "example-pipecd-control-plane" #edit here
+  project = "namba-pipecd-control-plane" # edit here
   redis = {
     node_type = "cache.t2.micro"
   }
 
   rds = {
-    db_instance_identifier = "example-pipecd-control-plane-db"
+    node_type = "db.t3.micro"
   }
 
-  s3 = {
-    alb_log_bucket = "example-pipecd-control-plane-alb-log" #edit here
-    config_bucket = "example-pipecd-control-plane-config" 
+  s3 = { # These must be unique in the world.
+    alb_log_bucket = "${local.project}-alb-log"
+    config_bucket  = "${local.project}-config" # edit here
+  }
+
+  ssm = {
+    path_to_encryption_key = "/${local.project}/encryption-key"
   }
 }
 ```
@@ -85,18 +89,22 @@ locals {
 5. Make a s3 bucket for config file and write bucket name to `variables.tf`
 ```
 locals {
-  project = "example-pipecd-control-plane"
+  project = "namba-pipecd-control-plane"
   redis = {
     node_type = "cache.t2.micro"
   }
 
   rds = {
-    db_instance_identifier = "example-pipecd-control-plane-db"
+    node_type = "db.t3.micro"
   }
 
-  s3 = {
-    alb_log_bucket = "example-pipecd-control-plane-alb-log" 
-    config_bucket = "example-pipecd-control-plane-config" # edit here
+  s3 = { # These must be unique in the world.
+    alb_log_bucket = "${local.project}-alb-log"
+    config_bucket  = "${local.project}-config" # edit here
+  }
+
+  ssm = {
+    path_to_encryption_key = "/${local.project}/encryption-key"
   }
 }
 ```
@@ -110,7 +118,25 @@ The path must be under root.
 
 6. Put encryption key in parameter store and write the path to `variables.tf`
 ```
-/<project>/encryption-key
+locals {
+  project = "namba-pipecd-control-plane"
+  redis = {
+    node_type = "cache.t2.micro"
+  }
+
+  rds = {
+    node_type = "db.t3.micro"
+  }
+
+  s3 = { # These must be unique in the world.
+    alb_log_bucket = "${local.project}-alb-log"
+    config_bucket  = "${local.project}-config"
+  }
+
+  ssm = {
+    path_to_encryption_key = "/${local.project}/encryption-key" # edit here
+  }
+}
 ```
 
 ## Deploy
