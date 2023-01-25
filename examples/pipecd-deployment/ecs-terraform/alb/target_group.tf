@@ -6,15 +6,15 @@ resource "aws_lb_target_group" "main" {
     healthy_threshold   = "5"
     interval            = "300"
     matcher             = "200"
-    path                = "/health"
-    port                = "80"
+    path                = "/"
+    port                = "9090"
     protocol            = "HTTP"
     timeout             = "3"
     unhealthy_threshold = "2"
   }
 
   load_balancing_algorithm_type = "round_robin"
-  port                          = "80"
+  port                          = "9090"
   protocol                      = "HTTP"
   protocol_version              = "HTTP1"
   slow_start                    = "0"

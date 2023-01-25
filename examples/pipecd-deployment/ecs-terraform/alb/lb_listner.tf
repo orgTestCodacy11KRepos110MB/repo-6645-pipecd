@@ -3,6 +3,7 @@
 resource "aws_lb_listener" "main" {
   port     = "80"
   protocol = "HTTP"
+  depends_on = [aws_lb_target_group.main]
 
   load_balancer_arn = aws_lb.main.arn
 

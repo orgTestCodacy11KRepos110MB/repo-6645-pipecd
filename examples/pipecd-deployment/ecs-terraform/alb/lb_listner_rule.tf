@@ -10,5 +10,5 @@ resource "aws_lb_listener_rule" "main" {
       values = ["*"]
     }
   }
-  depends_on = [aws_lb_target_group.main]
+  depends_on = [aws_lb_listener.main]
 }
