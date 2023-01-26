@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "this" {
         ]
         essential = false
         command = [
-          "/bin/sh -c 'apk update; apk add curl; curl https://${var.config_bucket_name}.s3.${data.aws_region.current.id}.amazonaws.com/envoy-config.yaml >> envoy-config.yaml; envoy -c envoy-config.yaml;'"
+          "/bin/sh -c 'apk update; apk add curl; apk add aws-cli; aws s3 cp s3://namba-pipecd-control-plane-config/envoy-config.yaml ./; envoy -c envoy-config.yaml;'"
         ]
         entrypoint = [
           "sh",
@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "this" {
         portMappings = [
         ]
         command = [
-          "/bin/sh -c 'curl https://${var.config_bucket_name}.s3.${data.aws_region.current.id}.amazonaws.com/control-plane-config.yaml >> control-plane-config.yaml; sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml; cat control-plane-config.yaml; echo $ENCRYPTION_KEY >> encryption-key; pipecd server --insecure-cookie=true --cache-address=${var.redis_host}:6379 --config-file=control-plane-config.yaml --enable-grpc-reflection=false --encryption-key-file=encryption-key --log-encoding=humanize --metrics=true;'"
+          "/bin/sh -c 'apk add aws-cli; aws s3 cp s3://namba-pipecd-control-plane-config/control-plane-config.yaml ./; sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml; cat control-plane-config.yaml; echo $ENCRYPTION_KEY >> encryption-key; pipecd server --insecure-cookie=true --cache-address=${var.redis_host}:6379 --config-file=control-plane-config.yaml --enable-grpc-reflection=false --encryption-key-file=encryption-key --log-encoding=humanize --metrics=true;'"
         ]
         entrypoint = [
           "sh",
