@@ -7,24 +7,24 @@ Support install PipeCD control plane on other platform which is not k8s
 
 # Motivation
 
-Now we can deploy the control plane to kubernetes cluster, but some developers that would like to introduce PipeCD can not prepare kubernetes environments. We want to support  install PipeCD control plane on platforms other than kubernetes.
+Now we can deploy the control plane to kubernetes cluster, but some developers that would like to introduce PipeCD can not prepare kubernetes environments. We want to support install PipeCD control plane on platforms other than kubernetes.
 
 # Detailed design
 
 1. Control Plane on docker-compose
     - Developers can deploy control plane on a single machine.
-    - Developers do not have to prepare datastore and filestore by themselves or they can easily use database or filestore on local machine.
+    - Developers do not have to prepare a datastore and a filestore by themselves or they can easily use a database or a filestore on local machine.
     
 2. Control Plane on managed container services (ex. ECS)
-    - Pipecd can give the way to deploy control plane as Terraform template.
-    - They can easily use managed database or storage system on cloud as datastore and filestore.
+    - Pipecd can give the way to deploy a control plane as Terraform template.
+    - They can easily use the managed database or storage system on cloud as datastore and filestore.
     ![image](assets/control-plane-on-aws.jpg)
     
     Note:
-    - Devide pipecd-server and pipecd-ops to different services because they have the same port and have different authorization.
+    - Devide a pipecd-server and a pipecd-ops to different services because they have the same port and have different authorization.
     - Pay attention to brocking public access to s3.
         - Add IAM role to ECS to access S3.
-    - Set up before container start to run so that pipecd can use config file and encryption.
+    - Set up before containers start to run so that pipecd can use config files and encryption key.
     ```
     # get configuration files from priavete s3 bucket via aws-cli
     apk add aws-cli
