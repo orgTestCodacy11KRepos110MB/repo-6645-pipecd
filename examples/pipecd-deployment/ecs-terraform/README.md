@@ -18,7 +18,33 @@ terraform {
   }
 }
 ```
-2. Make a s3 bucket for filestore and write the bucket name for it to `control-plane-config.yaml`
+
+2. Edit `variables.tf` for your project
+```
+//export
+locals {
+  project = "namba-pipecd-control-plane" #edit here
+  redis = {
+    node_type = "cache.t2.micro"
+  }
+
+  rds = {
+    node_type = "db.t3.micro"
+  }
+
+  s3 = { # These must be unique in the world.
+    alb_log_bucket = "${local.project}-alb-log" # edit here
+    config_bucket  = "${local.project}-config"
+    filestore_bucket = "${local.project}-filestore"
+  }
+
+  ssm = {
+    path_to_encryption_key = "/${local.project}/encryption-key"
+  }
+}
+```
+
+3. Make a s3 bucket for filestore and write the bucket name for it to `control-plane-config.yaml` and `variables.tf`
 ```
 apiVersion: "pipecd.dev/v1beta1"
 kind: ControlPlane
@@ -39,8 +65,30 @@ spec:
         username: hello-pipecd
         passwordHash: "$2a$10$ye96mUqUqTnjUqgwQJbJzel/LJibRhUnmzyypACkvrTSnQpVFZ7qK" # bcrypt value of "hello-pipecd"
 ```
+```
+//export
+locals {
+  project = "namba-pipecd-control-plane" #edit here
+  redis = {
+    node_type = "cache.t2.micro"
+  }
 
-3. Write config of RDS for datastore to `control-plane-config.yaml`
+  rds = {
+    node_type = "db.t3.micro"
+  }
+
+  s3 = { # These must be unique in the world.
+    alb_log_bucket = "${local.project}-alb-log" 
+    config_bucket  = "${local.project}-config"
+    filestore_bucket = "${local.project}-filestore" # edit here
+  }
+
+  ssm = {
+    path_to_encryption_key = "/${local.project}/encryption-key"
+  }
+}
+```
+4. Write config of RDS for datastore to `control-plane-config.yaml`
 Note: Do not edit hostname (pipecd-mysql) because it will be edited autimaticaly by terraform.
 ```
 apiVersion: "pipecd.dev/v1beta1"
@@ -63,29 +111,6 @@ spec:
         passwordHash: "$2a$10$ye96mUqUqTnjUqgwQJbJzel/LJibRhUnmzyypACkvrTSnQpVFZ7qK" # bcrypt value of "hello-pipecd"
 ```
 
-4. Edit `variables.tf` for your project
-```
-locals {
-  project = "namba-pipecd-control-plane" # edit here
-  redis = {
-    node_type = "cache.t2.micro"
-  }
-
-  rds = {
-    node_type = "db.t3.micro"
-  }
-
-  s3 = { # These must be unique in the world.
-    alb_log_bucket = "${local.project}-alb-log"
-    config_bucket  = "${local.project}-config" # edit here
-  }
-
-  ssm = {
-    path_to_encryption_key = "/${local.project}/encryption-key"
-  }
-}
-```
-
 5. Make a s3 bucket for config file and write bucket name to `variables.tf`
 ```
 locals {
@@ -100,7 +125,8 @@ locals {
 
   s3 = { # These must be unique in the world.
     alb_log_bucket = "${local.project}-alb-log"
-    config_bucket  = "${local.project}-config" # edit here
+    config_bucket  = "${local.project}-config" # edit
+    filestore_bucket = "${local.project}-filestore" 
   }
 
   ssm = {
@@ -138,6 +164,11 @@ locals {
   }
 }
 ```
+
+7. Login ops server
+You can login pipecd-ops via ecs-exec
+```
+aws ssm start-session --target ecs:${CLUSTER}_${TASK_ID}_${CONTAINER_ID} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["9090"],"localPortNumber":["18080"]}'
 
 ## Deploy
 ```

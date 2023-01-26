@@ -27,12 +27,12 @@ locals {
   s3 = { # These must be unique in the world.
     alb_log_bucket = "${local.project}-alb-log"
     config_bucket  = "${local.project}-config"
+    filestore_bucket = "${local.project}-filestore"
   }
 
   ssm = {
     path_to_encryption_key = "/${local.project}/encryption-key"
   }
-
 }
 
 // common

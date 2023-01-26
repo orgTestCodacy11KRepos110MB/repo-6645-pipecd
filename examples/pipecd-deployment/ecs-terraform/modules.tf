@@ -50,6 +50,15 @@ module "ecs" {
   db_security_group_id    = module.rds.aws_security_group_id
   redis_security_group_id = module.redis.aws_security_group_id
   config_bucket_name      = local.s3.config_bucket
+  filestore_bucket_name = local.s3.filestore_bucket
   path_to_encryption_key  = local.ssm.path_to_encryption_key
   depends_on              = [module.alb, module.rds, module.redis]
+}
+
+module "ec2" {
+  source               = "./ec2"
+  db_security_group_id = module.rds.aws_security_group_id
+  subnet_id            = module.vpc.subnet_public_a_id
+  vpc_id               = module.vpc.vpc_id
+  depends_on           = [module.alb, module.rds]
 }

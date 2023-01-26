@@ -31,19 +31,6 @@ resource "aws_s3_bucket" "alb_log" {
   }
 }
 
-resource "null_resource" "default" {
-  triggers = {
-    bucket   = aws_s3_bucket.alb_log.bucket
-  }
-  depends_on = [
-    aws_s3_bucket.default
-  ]
-  provisioner "local-exec" {
-    when = destroy
-    command = "aws s3 rm s3://${self.triggers.bucket} --recursive"
-  }
-}
-
 resource "aws_s3_bucket_policy" "alb_log" {
   bucket = aws_s3_bucket.alb_log.id
   policy = data.aws_iam_policy_document.s3_alb_log_policy.json
@@ -51,7 +38,6 @@ resource "aws_s3_bucket_policy" "alb_log" {
 
 
 data "aws_iam_policy_document" "s3_alb_log_policy" {
-  # "Id": "AWSConsole-AccessLogs-Policy-1491817904669",
   version = "2012-10-17"
   statement {
     effect    = "Allow"

@@ -72,32 +72,10 @@ resource "aws_ecs_task_definition" "this" {
           }
         }
       },
-      {
-        name  = "pipecd-ops"
-        image = var.ops_image_url
-        portMappings = [
-        ]
-        command = [
-          "/bin/sh -c 'curl https://${var.config_bucket_name}.s3.${data.aws_region.current.id}.amazonaws.com/control-plane-config.yaml >> control-plane-config.yaml; sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml; echo $ENCRYPTION_KEY >> encryption-key; pipecd server --insecure-cookie=true --cache-address=${var.redis_host}:6379 --config-file=control-plane-config.yaml --enable-grpc-reflection=false --encryption-key-file=encryption-key --log-encoding=humanize --metrics=true;'"
-        ]
-        entrypoint = [
-          "sh",
-          "-c"
-        ]
-        secrets = [ {"name" : "ENCRYPTION_KEY", "valueFrom" : "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.self.account_id}:parameter${var.path_to_encryption_key}" }]
-        logConfiguration = {
-          logDriver = "awslogs"
-          options = {
-            awslogs-group         = var.log_group_name
-            awslogs-region        = data.aws_region.current.id
-            awslogs-stream-prefix = "${var.project}-pipecd-ops"
-          }
-        }
-      },
     ]
   )
   tags = {
-    Name = "new-bus-main"
+    Name = "${var.project}"
   }
 }
 resource "aws_ecs_service" "this" {
@@ -123,7 +101,7 @@ resource "aws_ecs_service" "this" {
   network_configuration {
     assign_public_ip = true
     security_groups = [
-      aws_security_group.web.id
+      aws_security_group.server.id
     ]
     subnets = [
       var.subnet_id

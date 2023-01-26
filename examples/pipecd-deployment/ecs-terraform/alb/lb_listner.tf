@@ -1,7 +1,7 @@
 # edit if you would like to use HTTPS
 
 resource "aws_lb_listener" "main" {
-  port     = "80"
+  port     = "9090"
   protocol = "HTTP"
   depends_on = [aws_lb_target_group.main]
 

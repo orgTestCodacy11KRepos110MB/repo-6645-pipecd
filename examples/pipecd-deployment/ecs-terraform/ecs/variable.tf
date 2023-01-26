@@ -58,10 +58,15 @@ variable "redis_host" {
 
 }
 
+variable "path_to_encryption_key" {
+
+}
+
 variable "config_bucket_name" {
 
 }
 
-variable "path_to_encryption_key" {
+variable "filestore_bucket_name" {
 
 }
+
