@@ -19,17 +19,28 @@ Now we can deploy the control plane to kubernetes cluster, but some developers t
     - Pipecd can give the way to deploy control plane as Terraform template.
     - They can easily use managed database or storage system on cloud as datastore and filestore.
     ![image](assets/control-plane-on-aws.jpg)
+    
     Note:
     - Devide pipecd-server and pipecd-ops to different services because they have the same port and have different authorization.
     - Pay attention to brocking public access to s3.
         - Add IAM role to ECS to access S3.
-    - Put config files for control plane on S3 and get them in container as below
+    - Set up before container start to run so that pipecd can use config file and encryption.
     ```
-    # You must download via aws cli because bucket is not public.
-    curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip; unzip awscliv2.zip; ./aws/install;
-    aws s3 cp s3://namba-pipecd-control-plane-config/control-plane-config.yaml ./;
-    # rewrite datastore endpoint(This is example for terraform users)
-    sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml;
+    # get configuration files from priavete s3 bucket via aws-cli
+    apk add aws-cli
+    aws s3 cp s3://namba-pipecd-control-plane-config/control-plane-config.yaml ./
+    # replace datastore endpoint (if you use terraform, you can replace by using variable)
+    sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml
+    # You must set encryption key to environment value
+    echo $ENCRYPTION_KEY >> encryption-key
+    # replace cache endpoint (if you use terraform, you can replace by using variable)
+    pipecd server \
+    --insecure-cookie=true \
+    --cache-address=${var.redis_host}:6379 \
+    --config-file=control-plane-config.yaml \
+    --enable-grpc-reflection=false \
+    --encryption-key-file=encryption-key \
+    --log-encoding=humanize --metrics=true;
     ```
 
 # Alternatives
