@@ -1,16 +1,17 @@
 variable "project" {
-
+  type    = string
+  default = ""
 }
 
 variable "tags" {
-
+  type = map
+  default = {}
 }
 variable "vpc_id" {
-
-}
-variable "access_log_bucket_name" {
-
+  type    = string
+  default = ""
 }
 variable "subnet_ids" {
-
+  type    = list
+  default = []
 }

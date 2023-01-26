@@ -21,7 +21,7 @@ resource "aws_network_acl" "main" {
     to_port    = "0"
   }
 
-  subnet_ids = [aws_subnet.public_a.id, aws_subnet.public_c.id, aws_subnet.public_d.id]
+  subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_c.id, aws_subnet.private_d.id]
   vpc_id     = aws_vpc.main.id
 
   tags = merge(var.tags, { "Name" = "${var.project}" })

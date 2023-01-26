@@ -1,9 +1,11 @@
 variable "project" {
-
+  type    = string
+  default = ""
 }
 
 variable "tags" {
-
+  type = map
+  default = {}
 }
 variable "desired_count" {
   type    = number
@@ -43,30 +45,37 @@ variable "lb_target_group_arn" {
 }
 
 variable "db_instance_address" {
-
+  type    = string
+  default = ""
 }
 
 variable "db_security_group_id" {
-
+  type    = string
+  default = ""
 }
 
 variable "redis_security_group_id" {
-
+  type    = string
+  default = ""
 }
 
 variable "redis_host" {
-
+  type    = string
+  default = ""
 }
 
 variable "path_to_encryption_key" {
-
+  type    = string
+  default = ""
 }
 
 variable "config_bucket_name" {
-
+  type    = string
+  default = ""
 }
 
 variable "filestore_bucket_name" {
-
+  type    = string
+  default = ""
 }
 

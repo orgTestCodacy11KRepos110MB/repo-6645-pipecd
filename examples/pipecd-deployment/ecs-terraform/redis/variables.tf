@@ -1,19 +1,21 @@
 variable "project" {
-
+  type    = string
+  default = ""
 }
 
 variable "tags" {
-
+  type = map
+  default = {}
 }
 variable "node_type" {
-
-}
-variable "subnet_ids" {
-
+  type    = string
+  default = ""
 }
 variable "vpc_id" {
-
+  type    = string
+  default = ""
 }
 variable "redis_subnet_group_name" {
-
+  type    = string
+  default = ""
 }

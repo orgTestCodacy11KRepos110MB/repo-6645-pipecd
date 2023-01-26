@@ -66,7 +66,6 @@ resource "aws_ecs_service" "ops" {
   depends_on                         = [aws_iam_role.ecs_task_execution]
   # health_check_grace_period_seconds = 60
   network_configuration {
-    assign_public_ip = true
     security_groups = [
       aws_security_group.ops.id
     ]

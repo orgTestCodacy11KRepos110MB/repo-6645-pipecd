@@ -33,7 +33,6 @@ locals {
   }
 
   s3 = { # These must be unique in the world.
-    alb_log_bucket = "${local.project}-alb-log" # edit here
     config_bucket  = "${local.project}-config"
     filestore_bucket = "${local.project}-filestore"
   }
@@ -78,7 +77,6 @@ locals {
   }
 
   s3 = { # These must be unique in the world.
-    alb_log_bucket = "${local.project}-alb-log" 
     config_bucket  = "${local.project}-config"
     filestore_bucket = "${local.project}-filestore" # edit here
   }
@@ -124,7 +122,6 @@ locals {
   }
 
   s3 = { # These must be unique in the world.
-    alb_log_bucket = "${local.project}-alb-log"
     config_bucket  = "${local.project}-config" # edit
     filestore_bucket = "${local.project}-filestore" 
   }
@@ -155,8 +152,8 @@ locals {
   }
 
   s3 = { # These must be unique in the world.
-    alb_log_bucket = "${local.project}-alb-log"
     config_bucket  = "${local.project}-config"
+    filestore_bucket = "${local.project}-filestore" 
   }
 
   ssm = {
@@ -165,13 +162,14 @@ locals {
 }
 ```
 
-7. Login ops server
-You can login pipecd-ops via ecs-exec
-```
-aws ssm start-session --target ecs:${CLUSTER}_${TASK_ID}_${CONTAINER_ID} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["9090"],"localPortNumber":["18080"]}'
-
 ## Deploy
 ```
 terraform apply
+```
+
+## login admin console
+You can login pipecd-ops via ecs-exec
+```
+aws ssm start-session --target ecs:${CLUSTER}_${TASK_ID}_${CONTAINER_ID} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["9090"],"localPortNumber":["18080"]}'
 ```
 

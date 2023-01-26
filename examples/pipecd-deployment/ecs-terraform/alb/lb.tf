@@ -7,12 +7,6 @@ resource "aws_lb" "main" {
 
   drop_invalid_header_fields = false
 
-  access_logs {
-    bucket  = var.access_log_bucket_name
-    enabled = true
-    prefix  = "alb-main"
-  }
-
   subnets = var.subnet_ids
 
   idle_timeout               = "60"

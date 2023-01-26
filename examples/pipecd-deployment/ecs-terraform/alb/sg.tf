@@ -3,7 +3,7 @@ resource "aws_security_group" "alb_main" {
   description = "${var.project}-alb"
 
   tags = {
-    Name = "alb-new-bus-main-tf"
+    Name = "${var.project}-alb"
   }
   egress {
     cidr_blocks = ["0.0.0.0/0"]
