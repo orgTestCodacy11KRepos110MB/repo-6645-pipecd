@@ -16,8 +16,8 @@ resource "aws_security_group" "alb_main" {
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
     protocol    = "tcp"
-    from_port   = "443"
-    to_port     = "443"
+    from_port   = "9090"
+    to_port     = "9090"
     self        = false
   }
 
