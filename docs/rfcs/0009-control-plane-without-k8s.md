@@ -23,6 +23,14 @@ Now we can deploy the control plane to kubernetes cluster, but some developers t
     - Devide pipecd-server and pipecd-ops to different services because they have the same port and have different authorization.
     - Pay attention to brocking public access to s3.
         - Add IAM role to ECS to access S3.
+    - Put config files for control plane on S3 and get them in container as below
+    ```
+    # You must download via aws cli because bucket is not public.
+    curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip; unzip awscliv2.zip; ./aws/install;
+    aws s3 cp s3://namba-pipecd-control-plane-config/control-plane-config.yaml ./;
+    # rewrite datastore endpoint(This is example for terraform users)
+    sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml;
+    ```
 
 # Alternatives
 
