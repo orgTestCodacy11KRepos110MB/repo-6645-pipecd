@@ -24,24 +24,31 @@ Now we can deploy the control plane to kubernetes cluster, but some developers t
     - Devide a pipecd-server and a pipecd-ops to different services because they have the same port and have different authorization.
     - Pay attention to brocking public access to s3.
         - Add IAM role to ECS to access S3.
-    - Set up before containers start to run so that pipecd can use config files and encryption key.
-    ```
-    # get configuration files from priavete s3 bucket via aws-cli
-    apk add aws-cli
-    aws s3 cp s3://namba-pipecd-control-plane-config/control-plane-config.yaml ./
-    # replace datastore endpoint (if you use terraform, you can replace by using variable)
-    sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml
-    # You must set encryption key to environment value
-    echo $ENCRYPTION_KEY >> encryption-key
-    # replace cache endpoint (if you use terraform, you can replace by using variable)
-    pipecd server \
-    --insecure-cookie=true \
-    --cache-address=${var.redis_host}:6379 \
-    --config-file=control-plane-config.yaml \
-    --enable-grpc-reflection=false \
-    --encryption-key-file=encryption-key \
-    --log-encoding=humanize --metrics=true;
-    ```
+    - Set up before containers start to run so that pipecd can use config files and encryption key. You can choose from 3 options as bellow.
+        - Use Secrets Manager as config store.
+        ```
+        # get configuration files from priavete s3 bucket via aws-cli
+        echo $CONTROL_PLANE_CONFIG >> control_plane_config.yaml
+        # replace datastore endpoint (if you use terraform, you can replace by using variable)
+        sed -i -e s/pipecd-mysql/${var.db_instance_address}/ control-plane-config.yaml
+        # You must set encryption key to environment value
+        echo $ENCRYPTION_KEY >> encryption-key
+        # replace cache endpoint (if you use terraform, you can replace by using variable)
+        pipecd server \
+        --insecure-cookie=true \
+        --cache-address=${var.redis_host}:6379 \
+        --config-file=control-plane-config.yaml \
+        --enable-grpc-reflection=false \
+        --encryption-key-file=encryption-key \
+        --log-encoding=humanize --metrics=true;
+        ```
+        - Use Parameter Store as config store (Attention: Envoy config has over 4096 charactors, so you can not use Parameter Store as eonvy config file store.)
+        - Use S3 as config store. (Attention: install aws-cli to the pipecd-server container to get configuration files from priavete s3 bucket)
+        ```
+        # get configuration files from priavete s3 bucket via aws-cli
+        apk add aws-cli
+        aws s3 cp s3://namba-pipecd-control-plane-config/control-plane-config.yaml ./
+        ```
 
 # Alternatives
 
